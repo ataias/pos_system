@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Positioning System</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">GPS</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude: </string>
+    <string name="latitude_value">0</string>
+    <string name="longitude_value">0</string>
+    <string name="gps_image">Imagem bonitinha de GPS</string>
+    <string name="last_positions">Last Positions: </string>
+    <string name="last_position_01">Last position 01</string>
+    <string name="last_position_02">Last position 02</string>
+    <string name="update_coordinates">Atualizar</string>
+
+</resources>
