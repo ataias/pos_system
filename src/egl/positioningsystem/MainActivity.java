@@ -48,6 +48,13 @@ public class MainActivity extends Activity{
 	private class MyLocationListener implements LocationListener {
     	@Override
     	public void onLocationChanged(Location position){
+    		/*
+    		 * Atenção!
+    		 * Para este método de callback ser chamado,
+    		 * é necessário que haja permissão para que 
+    		 * o programa acesse o GPS, caso contrário 
+    		 * ele trava do nada.
+    		 * */
     	//	double d_longitude = position.getLongitude();
     	//	double d_latitude  = position.getLatitude();
     	//	latitude.setText("ataías");
