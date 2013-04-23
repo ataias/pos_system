@@ -9,9 +9,17 @@
     <string name="latitude_value">0</string>
     <string name="longitude_value">0</string>
     <string name="gps_image">Imagem bonitinha de GPS</string>
-    <string name="last_positions">Last Positions: </string>
+    <string name="last_positions">Últimas posições</string>
     <string name="last_position_01">Last position 01</string>
     <string name="last_position_02">Last position 02</string>
-    <string name="update_coordinates">Atualizar</string>
+    <string name="update_coordinates">Atualizar GPS</string>
+    <string name="accelerometer">Acelerômetro</string>
+    <string name="update_accelerometer">Atualizar acelerômetro</string>
+    <string name="accel_x">X: </string>
+    <string name="accel_y">Y: </string>
+    <string name="accel_z">Z: </string>
+    <string name="value_accel_x">Aceleração em X</string>
+    <string name="value_accel_y">Aceleração em Y</string>
+    <string name="value_accel_z">Aceleração em Z</string>
 
 </resources>
