@@ -118,15 +118,6 @@
         android:layout_below="@+id/textView4"
         android:text="@string/accel_z" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView6"
-        android:layout_marginTop="40dp"
-        android:layout_toRightOf="@+id/TextView03"
-        android:text="@string/update_accelerometer" />
-
     <ProgressBar
         android:id="@+id/progressBar1"
         style="?android:attr/progressBarStyleHorizontal"
@@ -178,5 +169,14 @@
         android:layout_below="@+id/imageView2"
         android:onClick="onClick"
         android:text="@string/update_coordinates" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="29dp"
+        android:layout_toRightOf="@+id/value_accel_z"
+        android:text="@string/update_accelerometer" />
 
 </RelativeLayout>
