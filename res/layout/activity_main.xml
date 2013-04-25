@@ -108,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView4"
         android:layout_below="@+id/textView5"
-        android:text="@string/accel_y" />
+        android:text="@string/accel_z" />
 
     <TextView
         android:id="@+id/textView5"
@@ -116,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView6"
         android:layout_below="@+id/textView4"
-        android:text="@string/accel_z" />
+        android:text="@string/accel_y" />
 
     <ProgressBar
         android:id="@+id/progressBar1"

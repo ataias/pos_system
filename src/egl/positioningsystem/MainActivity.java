@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements SensorEventListener{
 	private boolean mInitialized;
 	private Sensor mAccelerometer;
 	private float mLastX, mLastY, mLastZ;
-	private final float NOISE = (float) 0.1;
+	private final float NOISE = (float) 0.0;
 	//---------- end acceleration objects -------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
