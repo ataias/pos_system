@@ -1,11 +1,9 @@
 package egl.positioningsystem;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
@@ -13,45 +11,80 @@ import android.content.Context;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import egl.positioningsystem.SensorGPS;
 
-public class MainActivity extends Activity implements SensorEventListener{
+public class MainActivity extends Activity {
 
 	// Objects to deal with location ------------------
-	private TextView latitude = null;
-	private TextView longitude = null;
+	private TextView tv_latitude = null;
+	private TextView tv_longitude = null;
 	private String str_longitude;
-	private String str_latitude;	
-	private LocationManager locationManager=null;
-	private LocationListener locationListener=null;	
+	private String str_latitude;
+	private Double latitude;
+	private Double longitude;
+	private SensorManager mSensorManager;
+	private LocationManager locationManager = null;
+	
+	private SensorAccel myAccel = null;
+	private SensorGPS myGPS = null;
+	
+	private Timer timer;
 	// --------- end location objects -----------------
 	
-	// Objects to deal with acceleration
-	private SensorManager mSensorManager;
-	private boolean mInitialized;
-	private Sensor mAccelerometer;
-	private float mLastX, mLastY, mLastZ;
-	private final float NOISE = (float) 0.0;
 	//---------- end acceleration objects -------------
+
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	// Objects to deal with acceleration
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
         //GPS --------------------------------------------------
-        latitude = (TextView) findViewById(R.id.latitude_value);
-        longitude = (TextView) findViewById(R.id.longitude_value);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        tv_latitude = (TextView) findViewById(R.id.latitude_value);
+        tv_longitude = (TextView) findViewById(R.id.longitude_value);
+    	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	myGPS = new SensorGPS(locationManager);
+    	
         // -----------------------------------------------------
         
         //Acceleration -----------------------------------------
-        mInitialized = false;
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    	myAccel = new SensorAccel(mSensorManager);
         // -----------------------------------------------------
     }
+ 
+    //Acceleration --------------------------------------------
+	protected void onResume() {
+    	super.onResume();
+    	mSensorManager.registerListener(myAccel, myAccel.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    	timer = new Timer();
+    	timer.schedule(new TimerTask() {
+    	@Override
+    	public void run() {
+    			getGPSData();
+    	    	tv_latitude.setText(str_latitude);
+    	    	tv_longitude.setText(str_longitude);
+    	    	
+    			TextView tvAccelX= (TextView)findViewById(R.id.value_accel_x);
+    			TextView tvAccelY= (TextView)findViewById(R.id.value_accel_y);
+    			TextView tvAccelZ= (TextView)findViewById(R.id.value_accel_z);
+    			
+    			tvAccelX.setText(Float.toString(myAccel.getAccelX()));
+    			tvAccelY.setText(Float.toString(myAccel.getAccelY()));
+    			tvAccelZ.setText(Float.toString(myAccel.getAccelZ()));
 
+    		}
+    	}, 0, 100);
+	}
+    	
+	protected void onPause() {
+		super.onPause();
+		mSensorManager.unregisterListener(myAccel);
+	}
 
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -61,50 +94,29 @@ public class MainActivity extends Activity implements SensorEventListener{
     
     // -------------- GSP ------------------
     public void onClick(View view){
-    	locationListener = new MyLocationListener();
-    	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+    	getGPSData();
+    	tv_latitude.setText(str_latitude);
+    	tv_longitude.setText(str_longitude);
     	
+		TextView tvAccelX= (TextView)findViewById(R.id.value_accel_x);
+		TextView tvAccelY= (TextView)findViewById(R.id.value_accel_y);
+		TextView tvAccelZ= (TextView)findViewById(R.id.value_accel_z);
+		
+		tvAccelX.setText(Float.toString(myAccel.getAccelX()));
+		tvAccelY.setText(Float.toString(myAccel.getAccelY()));
+		tvAccelZ.setText(Float.toString(myAccel.getAccelZ()));
     }
-    //TODO Melhorar GPS
-    //TODO outro teste 
-	//Class to get location
-	private class MyLocationListener implements LocationListener {
-    	@Override
-    	public void onLocationChanged(Location position){
-    		/*
-    		 * Atenção!
-    		 * Para este método de callback ser chamado,
-    		 * é necessário que haja permissão para que 
-    		 * o programa acesse o GPS, caso contrário 
-    		 * ele trava do nada.
-    		 * */
-    	//	double d_longitude = position.getLongitude();
-    	//	double d_latitude  = position.getLatitude();
-    	//	latitude.setText("ataías");
-    		str_longitude = ((Double)position.getLongitude()).toString();
-    		str_latitude  = ((Double)position.getLatitude()).toString();
-            latitude.setText(str_latitude);
-            longitude.setText(str_longitude);
-    	}
-    	
-        @Override
-        public void onProviderDisabled(String provider) {
-            // TODO Auto-generated method stub        	
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            // TODO Auto-generated method stub        	
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            // TODO Auto-generated method stub        	
-        }
+    
+    public void getGPSData(){
+    	latitude = (Double) myGPS.getLatitude();
+    	longitude = (Double) myGPS.getLongitude();
+    	str_latitude = latitude.toString();
+    	str_longitude =longitude.toString();
     }
+
     // -------------- end gps --------------
 	
-	//Acceleration --------------------------------------------
+	/*/Acceleration --------------------------------------------
 	protected void onResume() {
 		super.onResume();
 		mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -157,5 +169,5 @@ public class MainActivity extends Activity implements SensorEventListener{
 		
 	}
 	// ---------------- end acceleration ----------------------
-	
+	*/
 }
