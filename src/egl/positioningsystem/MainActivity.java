@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     	
     }
-    
+    //TODO Melhorar GPS
 	//Class to get location
 	private class MyLocationListener implements LocationListener {
     	@Override
