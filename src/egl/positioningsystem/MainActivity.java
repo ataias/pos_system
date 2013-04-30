@@ -66,7 +66,7 @@ public class MainActivity extends Activity implements SensorEventListener{
     	
     }
     //TODO Melhorar GPS
-    //TODO outro teste
+    //TODO outro teste 
 	//Class to get location
 	private class MyLocationListener implements LocationListener {
     	@Override
