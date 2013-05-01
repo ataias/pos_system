@@ -9,21 +9,17 @@ public class SensorAccel implements SensorEventListener{
 
 	private boolean mInitialized;
 	public Sensor mAccelerometer;
-	//private float mLastX, mLastY, mLastZ;
+	private float mLastX, mLastY, mLastZ;
+	private float mDeltaX, mDeltaY, mDeltaZ;
 	//private final float NOISE = (float) 0.0;
 	
 	private float f_ax,f_ay,f_az ;
 	
-	public float getAccelX(){
-		return f_ax;
+	public float[] getAccel(){
+		return new float[]{f_ax, f_ay, f_az};
 	}
-	
-	public float getAccelY(){
-		return f_ay;
-	}
-	
-	public float getAccelZ(){
-		return f_az;
+	public float[] getDeltaAccel(){
+		return new float[]{mDeltaX, mDeltaY, mDeltaZ};
 	}
 	
 	public SensorAccel(SensorManager mSensorManager){
@@ -44,16 +40,16 @@ public class SensorAccel implements SensorEventListener{
 		f_ay = event.values[1];
 		f_az = event.values[2];
 		
-		/*if(!mInitialized){
+		if(!mInitialized){
 			mLastX = f_ax;
 			mLastY = f_ay;
 			mLastZ = f_az;
 			mInitialized = true;
 		} else {
-			float deltaX = Math.abs(mLastX - f_ax);
-			float deltaY = Math.abs(mLastY - f_ay);
-			float deltaZ = Math.abs(mLastZ - f_az);
-		}*/
+			mDeltaX = Math.abs(mLastX - f_ax);
+			mDeltaY = Math.abs(mLastY - f_ay);
+			mDeltaZ = Math.abs(mLastZ - f_az);
+		}
 		
 		// TODO Criar um filtro para os dados
 		
