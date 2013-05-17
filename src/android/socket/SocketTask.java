@@ -80,11 +80,11 @@ public abstract class SocketTask extends AsyncTask<String, String, Boolean> {
                 publishProgress("CONNECT ERROR");
             }
         } catch (IOException e) {
-            publishProgress("ERROR");
+            publishProgress("ERROR Amarelo");
             Log.e("SocketAndroid", "Erro de entrada e saida", e);
             result = true;
         } catch (Exception e) {
-            publishProgress("ERROR");
+            publishProgress("ERROR Azul");
             Log.e("SocketAndroid", "Erro generico", e);
             result = true;
         } finally {
