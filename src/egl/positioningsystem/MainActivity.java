@@ -8,17 +8,24 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
+//import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.socket.SocketTask;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import egl.positioningsystem.LocationProvider;
 import egl.positioningsystem.SensorGPS;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends FragmentActivity {
+	
 	// Objects to deal with location ------------------
 	private TextView tv_latitude = null;
 	private TextView tv_longitude = null;
@@ -28,6 +35,9 @@ public class MainActivity extends Activity {
 	private Double longitude;
 	private SensorManager mSensorManager;
 	private LocationManager locationManager = null;
+	
+	// Other way to get location:
+	private LocationProvider mLocationProvider = null; 
 	
 	// Objects to deal with acceleration ------------------
 	private SensorAccel myAccel = null;
@@ -42,12 +52,15 @@ public class MainActivity extends Activity {
     private TextView txtValor;
     private TextView txtHostPort;
     private SocketTask st;
+    
+    // Handle to SharedPreferences for this app
+    SharedPreferences mPrefs;
 
+    // Handle to a SharedPreferences editor
+    SharedPreferences.Editor mEditor;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-    	// Objects to deal with acceleration
-    	
+    protected void onCreate(Bundle savedInstanceState) {   	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
@@ -56,6 +69,9 @@ public class MainActivity extends Activity {
         tv_longitude = (TextView) findViewById(R.id.longitude_value);
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	myGPS = new SensorGPS(locationManager);
+    	
+    	//LocationProvider:
+    	mLocationProvider = new LocationProvider(this,this);
         
         //Acceleration -----------------------------------------
     	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -71,6 +87,10 @@ public class MainActivity extends Activity {
     	//Automation of Sensor Handling
     	handler = new Handler();
     	handler.postDelayed(runnable, 100);
+    	
+        // Open Shared Preferences
+        mPrefs = getSharedPreferences(LocationUtils.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        
     }
  
     //Acceleration --------------------------------------------
@@ -80,7 +100,8 @@ public class MainActivity extends Activity {
 	}
     	
 	protected void onPause() {
-		super.onPause();
+		
+		super.onPause();		
 		mSensorManager.unregisterListener(myAccel);
 	}
 
@@ -115,11 +136,19 @@ public class MainActivity extends Activity {
     	str_longitude =longitude.toString();
     }
     
+    public void getLocation(){
+    	latitude = (Double) mLocationProvider.getLatitude();
+    	longitude = (Double) mLocationProvider.getLongitude();
+    	str_latitude = latitude.toString();
+    	str_longitude =longitude.toString();
+    }
+    
     private Runnable runnable = new Runnable() {
     	   @Override
     	   public void run() {
     	      /* do what you need to do */
-    	    	getGPSData();
+    	    	//getGPSData();
+    		    getLocation();
     	    	tv_latitude.setText(str_latitude);
     	    	tv_longitude.setText(str_longitude);
     	    	
@@ -137,6 +166,7 @@ public class MainActivity extends Activity {
     	   }
     	};
     	
+    	//TODO Verificar problemas e limpar gambiarras
         private View.OnClickListener btnConnectListener = new View.OnClickListener() {
             public void onClick(View v) {
      
@@ -147,20 +177,26 @@ public class MainActivity extends Activity {
                 final String port = hostPort.substring(idxHost + 1);
      
                 // Instancia a classe de conexão com socket
-                st = new SocketTask(host, Integer.parseInt(port), 5000) {
-                    @SuppressLint("SimpleDateFormat")
-					@Override
-                    protected void onProgressUpdate(String... progress) {
-                        SimpleDateFormat sdf = new SimpleDateFormat(
-                                "dd/MM/yyyy HH:mm:ss");
-                        // Recupera o retorno
-                        txtStatus.setText(sdf.format(new Date()) + " - "
+                try
+                {
+                	st = new SocketTask(host, Integer.parseInt(port), 5000) {
+                		@SuppressLint("SimpleDateFormat")
+                		@Override
+                		protected void onProgressUpdate(String... progress) {
+                			SimpleDateFormat sdf = new SimpleDateFormat(
+                					"dd/MM/yyyy HH:mm:ss");
+                			// Recupera o retorno
+                			txtStatus.setText(sdf.format(new Date()) + " - "
                                 + progress[0]);
-                    }
-                };
-     
-                st.execute(txtValor.getText() == null ? "" : txtValor.getText()
+                		}
+                	};
+                
+                //TODO Verify problems here:
+                st.execute(txtValor.getText() == null ? " " : txtValor.getText()
                         .toString()); // Envia os dado
+                }catch(Exception e){
+                	Toast.makeText(MainActivity.this, "INPUT ERROR!", Toast.LENGTH_SHORT).show();
+                }
             }
         };
         @Override
