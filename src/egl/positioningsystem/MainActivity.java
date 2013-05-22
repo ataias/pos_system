@@ -8,8 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.app.DialogFragment;
 //import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,7 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import egl.positioningsystem.LocationProvider;
 import egl.positioningsystem.SensorGPS;
 
 public class MainActivity extends FragmentActivity {
@@ -35,10 +32,7 @@ public class MainActivity extends FragmentActivity {
 	private Double longitude;
 	private SensorManager mSensorManager;
 	private LocationManager locationManager = null;
-	
-	// Other way to get location:
-	private LocationProvider mLocationProvider = null; 
-	
+
 	// Objects to deal with acceleration ------------------
 	private SensorAccel myAccel = null;
 	private SensorGPS myGPS = null;
@@ -52,7 +46,7 @@ public class MainActivity extends FragmentActivity {
     private TextView txtValor;
     private TextView txtHostPort;
     private SocketTask st;
-    
+    private SocketTask automaticSender;
     // Handle to SharedPreferences for this app
     SharedPreferences mPrefs;
 
@@ -69,9 +63,6 @@ public class MainActivity extends FragmentActivity {
         tv_longitude = (TextView) findViewById(R.id.longitude_value);
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	myGPS = new SensorGPS(locationManager);
-    	
-    	//LocationProvider:
-    	mLocationProvider = new LocationProvider(this,this);
         
         //Acceleration -----------------------------------------
     	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -82,15 +73,12 @@ public class MainActivity extends FragmentActivity {
         txtStatus = (TextView) findViewById(R.id.textView8);
         txtValor = (TextView) findViewById(R.id.editText2);
         txtHostPort = (TextView) findViewById(R.id.editText1);
-        btnSend.setOnClickListener(btnConnectListener);
+        btnSend.setOnClickListener(btnConnectListener);        
     	
     	//Automation of Sensor Handling
     	handler = new Handler();
     	handler.postDelayed(runnable, 100);
     	
-        // Open Shared Preferences
-        mPrefs = getSharedPreferences(LocationUtils.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        
     }
  
     //Acceleration --------------------------------------------
@@ -135,20 +123,13 @@ public class MainActivity extends FragmentActivity {
     	str_latitude = latitude.toString();
     	str_longitude =longitude.toString();
     }
-    
-    public void getLocation(){
-    	latitude = (Double) mLocationProvider.getLatitude();
-    	longitude = (Double) mLocationProvider.getLongitude();
-    	str_latitude = latitude.toString();
-    	str_longitude =longitude.toString();
-    }
-    
+   
     private Runnable runnable = new Runnable() {
-    	   @Override
+    	   @SuppressLint("SimpleDateFormat")
+		@Override
     	   public void run() {
     	      /* do what you need to do */
-    	    	//getGPSData();
-    		    getLocation();
+    	    	getGPSData();
     	    	tv_latitude.setText(str_latitude);
     	    	tv_longitude.setText(str_longitude);
     	    	
@@ -162,7 +143,29 @@ public class MainActivity extends FragmentActivity {
     			tvAccelY.setText(Float.toString(Accel[1]));
     			tvAccelZ.setText(Float.toString(Accel[2]));
     	      /* and here comes the "trick" */
-    	      handler.postDelayed(this, 100);
+    			
+    	     automaticSender = new SocketTask("164.41.65.20", 8090, 1500){
+    	            @SuppressLint("SimpleDateFormat")
+    				@Override
+    	            protected void onProgressUpdate(String... progress) {
+    	                SimpleDateFormat sdf = new SimpleDateFormat(
+    	                        "dd/MM/yyyy HH:mm:ss");
+    	                // Recupera o retorno
+    	                txtStatus.setText(sdf.format(new Date()) + " - "
+    	                        + progress[0]);
+    	     }
+    	    };
+    	    SimpleDateFormat sdf = new SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm:ss");
+    	    String sendThis = sdf.format(new Date()) + "LatLon=" + str_latitude + str_longitude + "AccelX= " + Accel[0] + "AccelY= " + Accel[1] + "AccelZ= " + Accel[2];
+    	    automaticSender.execute(txtValor.getText() == null ? "" : sendThis);
+    		/*  try {
+				automaticSender.sendData("Ataias");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+    	      handler.postDelayed(this, 2000);
     	   }
     	};
     	
