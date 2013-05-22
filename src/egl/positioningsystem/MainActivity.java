@@ -43,12 +43,13 @@ public class MainActivity extends FragmentActivity {
 	//Socket
 	private Button btnSend;
     private TextView txtStatus;
-    private TextView txtValor;
+    //private TextView txtValor;
     private TextView txtHostPort;
     private SocketTask st;
     private SocketTask automaticSender;
     // Handle to SharedPreferences for this app
-    SharedPreferences mPrefs;
+    SharedPreferences mPrefs; 
+    
 
     // Handle to a SharedPreferences editor
     SharedPreferences.Editor mEditor;
@@ -71,7 +72,7 @@ public class MainActivity extends FragmentActivity {
     	//Socket
         btnSend = (Button) findViewById(R.id.button2);
         txtStatus = (TextView) findViewById(R.id.textView8);
-        txtValor = (TextView) findViewById(R.id.editText2);
+        //txtValor = (TextView) findViewById(R.id.editText2);
         txtHostPort = (TextView) findViewById(R.id.editText1);
         btnSend.setOnClickListener(btnConnectListener);        
     	
@@ -157,8 +158,8 @@ public class MainActivity extends FragmentActivity {
     	    };
     	    SimpleDateFormat sdf = new SimpleDateFormat(
                     "dd/MM/yyyy HH:mm:ss");
-    	    String sendThis = sdf.format(new Date()) + "LatLon=" + str_latitude + str_longitude + "AccelX= " + Accel[0] + "AccelY= " + Accel[1] + "AccelZ= " + Accel[2];
-    	    automaticSender.execute(txtValor.getText() == null ? "" : sendThis);
+    	    String sendThis = sdf.format(new Date()) + " Latitude=" + str_latitude +" Longitude=" +  str_longitude;
+    	    automaticSender.execute("eu" == null ? "" : sendThis);
     		/*  try {
 				automaticSender.sendData("Ataias");
 			} catch (IOException e) {
@@ -195,7 +196,7 @@ public class MainActivity extends FragmentActivity {
                 	};
                 
                 //TODO Verify problems here:
-                st.execute(txtValor.getText() == null ? " " : txtValor.getText()
+                st.execute("eu" == null ? " " : "eu"
                         .toString()); // Envia os dado
                 }catch(Exception e){
                 	Toast.makeText(MainActivity.this, "INPUT ERROR!", Toast.LENGTH_SHORT).show();

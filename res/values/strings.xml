@@ -24,6 +24,6 @@
     <string name="start_sensors">Iniciar sensores</string>
     <string name="start_server">Conectar</string>
     <string name="host_port">Host:Porta</string>
-    <string name="host_port_hint">192.168.0.100:8090</string>
+    <string name="host_port_hint">186.193.7.38:5001</string>
 
 </resources>
