@@ -12,11 +12,12 @@ public class SensorGPS implements SensorEventListener{
 
 	private double longitude;
 	private double latitude;
-	private LocationListener locationListener=null;	
+	private LocationListener locationListener=null;
+	private float velocidade;	
 	
 	public SensorGPS(LocationManager locationManager){
     	locationListener = new MyLocationListener();
-    	locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
 	}
 	
 	// TODO Criar um filtro para os dados
@@ -27,6 +28,10 @@ public class SensorGPS implements SensorEventListener{
 	
 	public double getLongitude(){
 		return longitude;
+	}
+	
+	public double getVelocidade(){
+		return velocidade;
 	}
 	
     //TODO Melhorar GPS
@@ -45,6 +50,7 @@ public class SensorGPS implements SensorEventListener{
     	//	double d_longitude = position.getLongitude();
     	//	double d_latitude  = position.getLatitude();
     	//	latitude.setText("ataías");
+    		velocidade = position.getSpeed();
     		longitude = position.getLongitude();
     		latitude  = position.getLatitude();
     	}

@@ -3,6 +3,9 @@
     package="egl.positioningsystem"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <!-- Permissions to read IMEI -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 	<!-- Permissions for GPS use -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>

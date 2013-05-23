@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.socket.SocketTask;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -28,8 +29,10 @@ public class MainActivity extends FragmentActivity {
 	private TextView tv_longitude = null;
 	private String str_longitude;
 	private String str_latitude;
+	private String str_velocidade;
 	private Double latitude;
 	private Double longitude;
+	private Double velocidade;
 	private SensorManager mSensorManager;
 	private LocationManager locationManager = null;
 
@@ -49,8 +52,8 @@ public class MainActivity extends FragmentActivity {
     private SocketTask automaticSender;
     // Handle to SharedPreferences for this app
     SharedPreferences mPrefs; 
-    
-
+    String device_id;
+    TelephonyManager tm;
     // Handle to a SharedPreferences editor
     SharedPreferences.Editor mEditor;
 	
@@ -76,6 +79,8 @@ public class MainActivity extends FragmentActivity {
         txtHostPort = (TextView) findViewById(R.id.editText1);
         btnSend.setOnClickListener(btnConnectListener);        
     	
+        tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        device_id = tm.getDeviceId();
     	//Automation of Sensor Handling
     	handler = new Handler();
     	handler.postDelayed(runnable, 100);
@@ -121,6 +126,7 @@ public class MainActivity extends FragmentActivity {
     public void getGPSData(){
     	latitude = (Double) myGPS.getLatitude();
     	longitude = (Double) myGPS.getLongitude();
+    	velocidade = (Double) myGPS.getVelocidade();
     	str_latitude = latitude.toString();
     	str_longitude =longitude.toString();
     }
@@ -145,7 +151,7 @@ public class MainActivity extends FragmentActivity {
     			tvAccelZ.setText(Float.toString(Accel[2]));
     	      /* and here comes the "trick" */
     			
-    	     automaticSender = new SocketTask("164.41.65.20", 8090, 1500){
+    	     automaticSender = new SocketTask("164.41.209.30", 8080, 1500){
     	            @SuppressLint("SimpleDateFormat")
     				@Override
     	            protected void onProgressUpdate(String... progress) {
@@ -158,7 +164,8 @@ public class MainActivity extends FragmentActivity {
     	    };
     	    SimpleDateFormat sdf = new SimpleDateFormat(
                     "dd/MM/yyyy HH:mm:ss");
-    	    String sendThis = sdf.format(new Date()) + " Latitude=" + str_latitude +" Longitude=" +  str_longitude;
+    	    
+    	    String sendThis = device_id + "," + sdf.format(new Date()) + "," + str_latitude + "," +  str_longitude + "," + velocidade;
     	    automaticSender.execute("eu" == null ? "" : sendThis);
     		/*  try {
 				automaticSender.sendData("Ataias");
