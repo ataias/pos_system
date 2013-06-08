@@ -111,6 +111,12 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
     
+    @Override
+	protected void onDestroy() {
+    	automaticSender.cancel(true);
+    	super.onDestroy();
+	}
+    
     // -------------- GSP ------------------
     public void onClick(View view){
     	getGPSData();
@@ -127,6 +133,10 @@ public class MainActivity extends FragmentActivity {
 		tvAccelZ.setText(Float.toString(Accel[2]));
     }
     
+    
+    /**
+     * Get Location Data by location provider
+     */
     public void getGPSData(){
     	latitude = (Double) myGPS.getLatitude();
     	longitude = (Double) myGPS.getLongitude();
@@ -136,7 +146,7 @@ public class MainActivity extends FragmentActivity {
     }
     
     /**
-     * Called when click in button
+     * Called when click in button buttonSetHostPort, get the host and port
      * @param view
      */
     public void setHostPort(View view){
@@ -158,10 +168,18 @@ public class MainActivity extends FragmentActivity {
         
     }
     
+    /**
+     * Send message to the last defined host
+     */
     public void sendBySocket(){
     	sendBySocket(host,port);
     }
     
+    /**
+     * Send message to specified host and port by socket
+     * @param host IP of server host
+     * @param port Port of server host
+     */
     public void sendBySocket(String host,int port){
     	try{
     	automaticSender = new SocketTask(host, port, 1500){
@@ -210,10 +228,4 @@ public class MainActivity extends FragmentActivity {
     	      handler.postDelayed(this, 2000);
     	   }
     	};
-    	
-    @Override
-	protected void onDestroy() {
-    	automaticSender.cancel(true);
-    	super.onDestroy();
-	}
 }

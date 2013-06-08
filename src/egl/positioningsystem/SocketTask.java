@@ -80,7 +80,7 @@ public abstract class SocketTask extends AsyncTask<String, String, Boolean> {
                 publishProgress("CONNECT ERROR");
             }
         } catch (IOException e) {
-            publishProgress("ERRO - DADOS NÃO ENVIADOS");
+            //publishProgress("ERRO - DADOS NÃO ENVIADOS");
             Log.e("SocketAndroid", "Erro de entrada e saida", e);
             result = true;
         } catch (Exception e) {
