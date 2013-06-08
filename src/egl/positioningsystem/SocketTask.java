@@ -84,7 +84,7 @@ public abstract class SocketTask extends AsyncTask<String, String, Boolean> {
             Log.e("SocketAndroid", "Erro de entrada e saida", e);
             result = true;
         } catch (Exception e) {
-            publishProgress("ERROR Azul");
+            publishProgress("ERROR !");
             Log.e("SocketAndroid", "Erro generico", e);
             result = true;
         } finally {

@@ -45,8 +45,9 @@ public class MainActivity extends FragmentActivity {
 	private Handler handler = null;
 	
 	//Socket
-	private String host = "164.41.65.20";//"164.41.209.30";
-	private int port = 8080;
+	//private String host = "164.41.65.20";//"164.41.209.30";
+	private String host = "186.193.7.38";/*IP for tests*/
+	private int port = 6001;
 	private Button btnSend;
     private TextView txtStatus;
     //private TextView txtValor;
@@ -142,11 +143,19 @@ public class MainActivity extends FragmentActivity {
     	// Recupera host e porta
         String hostPort = txtHostPort.getText().toString();
         
-        if(hostPort.length()>8){
-        	int idxHost = hostPort.indexOf(":");
-        	host = hostPort.substring(0, idxHost);
-        	port = Integer.parseInt(hostPort.substring(idxHost + 1));
+        try{
+        	if(hostPort.length()>8){
+        		int idxHost = hostPort.indexOf(":");
+        		host = hostPort.substring(0, idxHost);
+        		port = Integer.parseInt(hostPort.substring(idxHost + 1));
+        	}
+        	txtHostPort.setHint(host+":"+port);
+            txtHostPort.clearComposingText();
+            Toast.makeText(MainActivity.this, "IP: "+host+":"+port, Toast.LENGTH_SHORT).show();
+        }catch(Exception e){
+        	Toast.makeText(MainActivity.this, "INPUT ERROR", Toast.LENGTH_SHORT).show();
         }
+        
     }
     
     public void sendBySocket(){
@@ -154,7 +163,6 @@ public class MainActivity extends FragmentActivity {
     }
     
     public void sendBySocket(String host,int port){
-    	
     	try{
     	automaticSender = new SocketTask(host, port, 1500){
             @SuppressLint("SimpleDateFormat")
