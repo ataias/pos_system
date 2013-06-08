@@ -11,7 +11,7 @@ import android.annotation.SuppressLint;
 //import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.socket.SocketTask;
+//import android.socket.SocketTask;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import egl.positioningsystem.SensorGPS;
+import egl.positioningsystem.SocketTask;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -44,12 +45,14 @@ public class MainActivity extends FragmentActivity {
 	private Handler handler = null;
 	
 	//Socket
+	private String host = "164.41.65.20";//"164.41.209.30";
+	private int port = 8080;
 	private Button btnSend;
     private TextView txtStatus;
     //private TextView txtValor;
     private TextView txtHostPort;
-    private SocketTask st;
     private SocketTask automaticSender;
+    
     // Handle to SharedPreferences for this app
     SharedPreferences mPrefs; 
     String device_id;
@@ -73,11 +76,12 @@ public class MainActivity extends FragmentActivity {
     	myAccel = new SensorAccel(mSensorManager);
 
     	//Socket
-        btnSend = (Button) findViewById(R.id.button2);
-        txtStatus = (TextView) findViewById(R.id.textView8);
+        btnSend = (Button) findViewById(R.id.buttonSetHostPort);
+        txtStatus = (TextView) findViewById(R.id.textViewStatus);
         //txtValor = (TextView) findViewById(R.id.editText2);
         txtHostPort = (TextView) findViewById(R.id.editText1);
-        btnSend.setOnClickListener(btnConnectListener);        
+        txtHostPort.setHint(host+":"+port);
+        //btnSend.setOnClickListener(btnConnectListener);        
     	
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         device_id = tm.getDeviceId();
@@ -94,7 +98,6 @@ public class MainActivity extends FragmentActivity {
 	}
     	
 	protected void onPause() {
-		
 		super.onPause();		
 		mSensorManager.unregisterListener(myAccel);
 	}
@@ -130,6 +133,49 @@ public class MainActivity extends FragmentActivity {
     	str_latitude = latitude.toString();
     	str_longitude =longitude.toString();
     }
+    
+    /**
+     * Called when click in button
+     * @param view
+     */
+    public void setHostPort(View view){
+    	// Recupera host e porta
+        String hostPort = txtHostPort.getText().toString();
+        
+        if(hostPort.length()>8){
+        	int idxHost = hostPort.indexOf(":");
+        	host = hostPort.substring(0, idxHost);
+        	port = Integer.parseInt(hostPort.substring(idxHost + 1));
+        }
+    }
+    
+    public void sendBySocket(){
+    	sendBySocket(host,port);
+    }
+    
+    public void sendBySocket(String host,int port){
+    	
+    	try{
+    	automaticSender = new SocketTask(host, port, 1500){
+            @SuppressLint("SimpleDateFormat")
+			@Override
+            protected void onProgressUpdate(String... progress) {
+                SimpleDateFormat sdf = new SimpleDateFormat(
+                        "dd/MM/yyyy HH:mm:ss");
+                // Recupera o retorno
+                txtStatus.setText(sdf.format(new Date()) + " - "
+                        + progress[0]);
+            }
+    	};
+    	SimpleDateFormat sdf = new SimpleDateFormat(
+            "dd/MM/yyyy HH:mm:ss");
+    
+    	String sendThis = device_id + "," + sdf.format(new Date()) + "," + str_latitude + "," +  str_longitude + "," + velocidade;
+    	automaticSender.execute("eu" == null ? "" : sendThis);
+    	}catch(Exception e){
+        	Toast.makeText(MainActivity.this, "CONNECTION ERROR!", Toast.LENGTH_SHORT).show();
+        }
+    }
    
     private Runnable runnable = new Runnable() {
     	   @SuppressLint("SimpleDateFormat")
@@ -150,69 +196,16 @@ public class MainActivity extends FragmentActivity {
     			tvAccelY.setText(Float.toString(Accel[1]));
     			tvAccelZ.setText(Float.toString(Accel[2]));
     	      /* and here comes the "trick" */
+    		
+    		  sendBySocket();
     			
-    	     automaticSender = new SocketTask("164.41.209.30", 8080, 1500){
-    	            @SuppressLint("SimpleDateFormat")
-    				@Override
-    	            protected void onProgressUpdate(String... progress) {
-    	                SimpleDateFormat sdf = new SimpleDateFormat(
-    	                        "dd/MM/yyyy HH:mm:ss");
-    	                // Recupera o retorno
-    	                txtStatus.setText(sdf.format(new Date()) + " - "
-    	                        + progress[0]);
-    	     }
-    	    };
-    	    SimpleDateFormat sdf = new SimpleDateFormat(
-                    "dd/MM/yyyy HH:mm:ss");
-    	    
-    	    String sendThis = device_id + "," + sdf.format(new Date()) + "," + str_latitude + "," +  str_longitude + "," + velocidade;
-    	    automaticSender.execute("eu" == null ? "" : sendThis);
-    		/*  try {
-				automaticSender.sendData("Ataias");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
     	      handler.postDelayed(this, 2000);
     	   }
     	};
     	
-    	//TODO Verificar problemas e limpar gambiarras
-        private View.OnClickListener btnConnectListener = new View.OnClickListener() {
-            public void onClick(View v) {
-     
-                // Recupera host e porta
-                String hostPort = txtHostPort.getText().toString();
-                int idxHost = hostPort.indexOf(":");
-                final String host = hostPort.substring(0, idxHost);
-                final String port = hostPort.substring(idxHost + 1);
-     
-                // Instancia a classe de conexão com socket
-                try
-                {
-                	st = new SocketTask(host, Integer.parseInt(port), 5000) {
-                		@SuppressLint("SimpleDateFormat")
-                		@Override
-                		protected void onProgressUpdate(String... progress) {
-                			SimpleDateFormat sdf = new SimpleDateFormat(
-                					"dd/MM/yyyy HH:mm:ss");
-                			// Recupera o retorno
-                			txtStatus.setText(sdf.format(new Date()) + " - "
-                                + progress[0]);
-                		}
-                	};
-                
-                //TODO Verify problems here:
-                st.execute("eu" == null ? " " : "eu"
-                        .toString()); // Envia os dado
-                }catch(Exception e){
-                	Toast.makeText(MainActivity.this, "INPUT ERROR!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        @Override
-        protected void onDestroy() {
-            super.onDestroy();
-            st.cancel(true);
-        }
+    @Override
+	protected void onDestroy() {
+    	automaticSender.cancel(true);
+    	super.onDestroy();
+	}
 }
