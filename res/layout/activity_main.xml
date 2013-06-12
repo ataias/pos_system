@@ -101,14 +101,6 @@
         android:layout_alignParentRight="true"
         android:text="@string/value_accel_x" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/value_accel_z"
-        android:contentDescription="@string/gps_image"
-        android:src="@android:drawable/ic_menu_compass" />
-
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
@@ -155,5 +147,14 @@
         android:layout_above="@+id/longitude_value"
         android:layout_alignLeft="@+id/TextView05"
         android:text="@string/accel_x" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/value_accel_x"
+        android:layout_alignRight="@+id/value_accel_x"
+        android:contentDescription="@string/gps_image"
+        android:src="@android:drawable/ic_menu_compass" />
 
 </RelativeLayout>

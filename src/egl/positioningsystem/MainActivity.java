@@ -2,15 +2,20 @@ package egl.positioningsystem;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
 //import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 //import android.socket.SocketTask;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
@@ -79,13 +84,12 @@ public class MainActivity extends FragmentActivity {
     	//Socket
         btnSend = (Button) findViewById(R.id.buttonSetHostPort);
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
-        //txtValor = (TextView) findViewById(R.id.editText2);
         txtHostPort = (TextView) findViewById(R.id.editText1);
         txtHostPort.setHint(host+":"+port);
-        //btnSend.setOnClickListener(btnConnectListener);        
     	
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         device_id = tm.getDeviceId();
+        
     	//Automation of Sensor Handling
     	handler = new Handler();
     	handler.postDelayed(runnable, 100);
@@ -118,6 +122,11 @@ public class MainActivity extends FragmentActivity {
 	}
     
     // -------------- GSP ------------------
+    /**
+     * Show GPS and Accelerometer data 
+     * @deprecated
+     * @param view
+     */
     public void onClick(View view){
     	getGPSData();
     	tv_latitude.setText(str_latitude);
@@ -133,6 +142,24 @@ public class MainActivity extends FragmentActivity {
 		tvAccelZ.setText(Float.toString(Accel[2]));
     }
     
+    /**
+     * Open map with the location:
+     * @param Uri location
+     */
+    public void openMap(Uri location){
+    	//Create a mapIntent:
+    	Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+    	
+    	//Verify if has some app to run the Intent:
+    	PackageManager packageManager = getPackageManager();
+    	List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
+    	if(activities.size() > 0){
+    		//Execute Intent
+    		startActivity(mapIntent);
+    	}else{
+    		Toast.makeText(MainActivity.this, "Problems to open a Map", Toast.LENGTH_SHORT).show();
+    	}
+    }
     
     /**
      * Get Location Data by location provider
@@ -196,8 +223,8 @@ public class MainActivity extends FragmentActivity {
     	SimpleDateFormat sdf = new SimpleDateFormat(
             "dd/MM/yyyy HH:mm:ss");
     
-    	String sendThis = device_id + "," + sdf.format(new Date()) + "," + str_latitude + "," +  str_longitude + "," + velocidade;
-    	automaticSender.execute("eu" == null ? "" : sendThis);
+    	String sendThis = device_id + "," + sdf.format(new Date()) + "," + latitude + "," +  longitude + "," + velocidade;
+    	automaticSender.execute(sendThis);
     	}catch(Exception e){
         	Toast.makeText(MainActivity.this, "CONNECTION ERROR!", Toast.LENGTH_SHORT).show();
         }
@@ -225,7 +252,7 @@ public class MainActivity extends FragmentActivity {
     		
     		  sendBySocket();
     			
-    	      handler.postDelayed(this, 2000);
+    	      handler.postDelayed(this, 10000);// set to do each 10s
     	   }
     	};
 }
