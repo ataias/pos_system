@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,15 +44,17 @@ public class MainActivity extends FragmentActivity {
 	private SensorGPS myGPS = null;
 	
 	//To create infinite loop
-	private Handler handler = null;
-	private final int TIME_DELAY = 10000;//10s
+	private Handler handler_connection = null;
+	private Handler handler_screen = null;
+	private final int CONNECTION_TIME_DELAY = 10000;//10s
+	private final int SCREEN_TIME_DELAY = 1000;//10s
 	
 	//Socket
 	private String host = "164.41.65.20";//"164.41.209.30";
 	private int port = 8090;
 	//private String host = "186.193.7.38";/*IP for tests*/
 	//private int port = 6001;
-	private Button btnSend;
+//	private Button btnSend;
     private TextView txtStatus;
     //private TextView txtValor;
     private TextView txtHostPort;
@@ -83,7 +83,7 @@ public class MainActivity extends FragmentActivity {
     	myAccel = new SensorAccel(mSensorManager);*/
 
     	//Socket
-        btnSend = (Button) findViewById(R.id.buttonSetHostPort);
+      //  btnSend = (Button) findViewById(R.id.buttonSetHostPort);
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
         txtHostPort = (TextView) findViewById(R.id.editText1);
         txtHostPort.setHint(host+":"+port);
@@ -92,8 +92,11 @@ public class MainActivity extends FragmentActivity {
         device_id = tm.getDeviceId();
         
     	//Automation of Sensor Handling
-    	handler = new Handler();
-    	handler.postDelayed(runnable, 100);
+    	handler_connection = new Handler();
+    	handler_connection.postDelayed(connection_runnable, 100);
+    	handler_screen = new Handler();
+    	handler_screen.postDelayed(screen_runnable, 100);
+    	
     	
     }
  
@@ -221,30 +224,30 @@ public class MainActivity extends FragmentActivity {
         }
     }
    
-    private Runnable runnable = new Runnable() {
+    private Runnable screen_runnable = new Runnable() {
+   	   @SuppressLint("SimpleDateFormat")
+   	   @Override
+   	   public void run() {
+   	      /* do what you need to do */
+   	    	getGPSData();
+   	    	tv_latitude.setText(str_latitude);
+   	    	tv_longitude.setText(str_longitude);
+   	    	
+   	      /* and here comes the "trick" */    		
+
+          handler_screen.postDelayed(this, SCREEN_TIME_DELAY);
+       }
+    };
+    
+    private Runnable connection_runnable = new Runnable() {
     	   @SuppressLint("SimpleDateFormat")
-		@Override
+    	   @Override
     	   public void run() {
     	      /* do what you need to do */
-    	    	getGPSData();
-    	    	tv_latitude.setText(str_latitude);
-    	    	tv_longitude.setText(str_longitude);
-    	    	
-    	    	/*
-    			TextView tvAccelX= (TextView)findViewById(R.id.value_accel_x);
-    			TextView tvAccelY= (TextView)findViewById(R.id.value_accel_y);
-    			TextView tvAccelZ= (TextView)findViewById(R.id.value_accel_z);
-    			
-    			float[] Accel = new float[3];
-    			Accel = myAccel.getAccel();
-    			tvAccelX.setText(Float.toString(Accel[0]));
-    			tvAccelY.setText(Float.toString(Accel[1]));
-    			tvAccelZ.setText(Float.toString(Accel[2]));
-    	      /* and here comes the "trick" */
-    		
-    		  sendBySocket();
-    			
-    	      handler.postDelayed(this, TIME_DELAY);
-    	   }
-    	};
+    	    	sendBySocket();    	    	
+    	      /* and here comes the "trick" */    		
+
+           handler_connection.postDelayed(this, CONNECTION_TIME_DELAY);
+        }
+     };
 }
