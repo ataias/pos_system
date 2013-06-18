@@ -35,24 +35,25 @@ public class MainActivity extends FragmentActivity {
 	private TextView tv_longitude = null;
 	private String str_longitude;
 	private String str_latitude;
-	private String str_velocidade;
 	private Double latitude;
 	private Double longitude;
 	private Double velocidade;
-	private SensorManager mSensorManager;
+	//private SensorManager mSensorManager;
 	private LocationManager locationManager = null;
 
 	// Objects to deal with acceleration ------------------
-	private SensorAccel myAccel = null;
+	//private SensorAccel myAccel = null;
 	private SensorGPS myGPS = null;
 	
 	//To create infinite loop
 	private Handler handler = null;
+	private final int TIME_DELAY = 10000;//10s
 	
 	//Socket
-	//private String host = "164.41.65.20";//"164.41.209.30";
-	private String host = "186.193.7.38";/*IP for tests*/
-	private int port = 6001;
+	private String host = "164.41.65.20";//"164.41.209.30";
+	private int port = 8090;
+	//private String host = "186.193.7.38";/*IP for tests*/
+	//private int port = 6001;
 	private Button btnSend;
     private TextView txtStatus;
     //private TextView txtValor;
@@ -77,9 +78,9 @@ public class MainActivity extends FragmentActivity {
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	myGPS = new SensorGPS(locationManager);
         
-        //Acceleration -----------------------------------------
+        /*Acceleration -----------------------------------------
     	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-    	myAccel = new SensorAccel(mSensorManager);
+    	myAccel = new SensorAccel(mSensorManager);*/
 
     	//Socket
         btnSend = (Button) findViewById(R.id.buttonSetHostPort);
@@ -99,12 +100,12 @@ public class MainActivity extends FragmentActivity {
     //Acceleration --------------------------------------------
 	protected void onResume() {
     	super.onResume();
-    	mSensorManager.registerListener(myAccel, myAccel.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    	//mSensorManager.registerListener(myAccel, myAccel.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 	}
     	
 	protected void onPause() {
 		super.onPause();		
-		mSensorManager.unregisterListener(myAccel);
+		//mSensorManager.unregisterListener(myAccel);
 	}
 
 	
@@ -121,27 +122,6 @@ public class MainActivity extends FragmentActivity {
     	super.onDestroy();
 	}
     
-    // -------------- GSP ------------------
-    /**
-     * Show GPS and Accelerometer data 
-     * @deprecated
-     * @param view
-     */
-    public void onClick(View view){
-    	getGPSData();
-    	tv_latitude.setText(str_latitude);
-    	tv_longitude.setText(str_longitude);
-    	
-		TextView tvAccelX= (TextView)findViewById(R.id.value_accel_x);
-		TextView tvAccelY= (TextView)findViewById(R.id.value_accel_y);
-		TextView tvAccelZ= (TextView)findViewById(R.id.value_accel_z);
-		float[] Accel = new float[3];
-		Accel = myAccel.getAccel();
-		tvAccelX.setText(Float.toString(Accel[0]));
-		tvAccelY.setText(Float.toString(Accel[1]));
-		tvAccelZ.setText(Float.toString(Accel[2]));
-    }
-    
     /**
      * Open map with the location:
      * @param Uri location
@@ -153,12 +133,23 @@ public class MainActivity extends FragmentActivity {
     	//Verify if has some app to run the Intent:
     	PackageManager packageManager = getPackageManager();
     	List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
+    	
     	if(activities.size() > 0){
     		//Execute Intent
     		startActivity(mapIntent);
     	}else{
     		Toast.makeText(MainActivity.this, "Problems to open a Map", Toast.LENGTH_SHORT).show();
     	}
+    }
+    
+    /**
+     * Action to the button Map
+     * @param view
+     */
+    public void openMap(View view){
+    	//TODO Check Uri for location.
+    	Uri location = Uri.parse("geo: "+latitude+","+longitude);
+    	openMap(location);
     }
     
     /**
@@ -207,10 +198,10 @@ public class MainActivity extends FragmentActivity {
      * @param host IP of server host
      * @param port Port of server host
      */
-    public void sendBySocket(String host,int port){
+    @SuppressLint("SimpleDateFormat")
+	public void sendBySocket(String host,int port){
     	try{
     	automaticSender = new SocketTask(host, port, 1500){
-            @SuppressLint("SimpleDateFormat")
 			@Override
             protected void onProgressUpdate(String... progress) {
                 SimpleDateFormat sdf = new SimpleDateFormat(
@@ -239,6 +230,7 @@ public class MainActivity extends FragmentActivity {
     	    	tv_latitude.setText(str_latitude);
     	    	tv_longitude.setText(str_longitude);
     	    	
+    	    	/*
     			TextView tvAccelX= (TextView)findViewById(R.id.value_accel_x);
     			TextView tvAccelY= (TextView)findViewById(R.id.value_accel_y);
     			TextView tvAccelZ= (TextView)findViewById(R.id.value_accel_z);
@@ -252,7 +244,7 @@ public class MainActivity extends FragmentActivity {
     		
     		  sendBySocket();
     			
-    	      handler.postDelayed(this, 10000);// set to do each 10s
+    	      handler.postDelayed(this, TIME_DELAY);
     	   }
     	};
 }

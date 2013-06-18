@@ -181,14 +181,15 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_light=0x7f020017;
         public static final int ic_launcher=0x7f020018;
         public static final int ic_launcher2=0x7f020019;
+        public static final int logo_tcb=0x7f02001a;
+        public static final int unb_logo=0x7f02001b;
     }
     public static final class id {
-        public static final int TextView05=0x7f060010;
-        public static final int action_settings=0x7f060016;
-        public static final int buttonSetHostPort=0x7f060015;
-        public static final int editText1=0x7f060013;
+        public static final int action_settings=0x7f06000f;
+        public static final int buttonSetHostPort=0x7f06000b;
+        public static final int editText1=0x7f06000d;
         public static final int hybrid=0x7f060004;
-        public static final int imageView1=0x7f060011;
+        public static final int imageView1=0x7f06000e;
         public static final int latitude_value=0x7f060008;
         public static final int longitude_value=0x7f060009;
         public static final int none=0x7f060000;
@@ -198,17 +199,12 @@ containing a value of this type.
         public static final int textView1=0x7f060006;
         public static final int textView2=0x7f060005;
         public static final int textView3=0x7f060007;
-        public static final int textView4=0x7f06000b;
-        public static final int textView5=0x7f06000c;
-        public static final int textView6=0x7f06000a;
-        public static final int textView7=0x7f060012;
-        public static final int textViewStatus=0x7f060014;
-        public static final int value_accel_x=0x7f06000e;
-        public static final int value_accel_y=0x7f06000d;
-        public static final int value_accel_z=0x7f06000f;
+        public static final int textView7=0x7f06000c;
+        public static final int textViewStatus=0x7f06000a;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int activity_location=0x7f030000;
+        public static final int activity_main=0x7f030001;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
@@ -229,6 +225,7 @@ containing a value of this type.
         /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
          */
         public static final int auth_client_requested_by_msg=0x7f070011;
+        public static final int buttonMapsText=0x7f07002d;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 

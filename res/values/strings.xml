@@ -25,5 +25,6 @@
     <string name="start_server">Conectar</string>
     <string name="host_port">Host:Porta</string>
     <string name="host_port_hint">186.193.7.38:5001</string>
+    <string name="buttonMapsText">Mapa</string>
 
 </resources>
