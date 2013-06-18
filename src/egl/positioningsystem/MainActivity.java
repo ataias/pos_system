@@ -85,7 +85,7 @@ public class MainActivity extends FragmentActivity {
     	//Socket
       //  btnSend = (Button) findViewById(R.id.buttonSetHostPort);
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
-        txtHostPort = (TextView) findViewById(R.id.editText1);
+        txtHostPort = (TextView) findViewById(R.id.editHostPort);
         txtHostPort.setHint(host+":"+port);
     	
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);

@@ -9,7 +9,7 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtLat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
@@ -49,8 +49,8 @@
         android:id="@+id/latitude_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignBaseline="@+id/txtLat"
+        android:layout_alignBottom="@+id/txtLat"
         android:layout_toRightOf="@+id/textView1"
         android:text="@string/latitude_value" />
 
@@ -58,14 +58,14 @@
         android:id="@+id/longitude_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView3"
-        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignBaseline="@+id/txtLong"
+        android:layout_alignBottom="@+id/txtLong"
         android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@+id/textView3"
+        android:layout_toRightOf="@+id/txtLong"
         android:text="@string/latitude_value" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/editHostPort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView7"
@@ -81,8 +81,8 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/txtLat"
+        android:layout_below="@+id/txtLat"
         android:layout_marginTop="16dp"
         android:text="@string/host_port" />
 
@@ -96,7 +96,7 @@
         android:text="@string/start_server" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/txtLong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
@@ -108,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView7"
-        android:layout_below="@+id/editText1"
+        android:layout_below="@+id/editHostPort"
         android:layout_marginTop="32dp"
         android:text="HostMessage"
         android:textAppearance="?android:attr/textAppearanceMedium" />
