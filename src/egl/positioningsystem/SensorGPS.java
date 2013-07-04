@@ -15,6 +15,13 @@ public class SensorGPS implements SensorEventListener{
 	private LocationListener locationListener=null;
 	private float velocidade;
 	
+	// flag for GPS status
+	boolean isGPSEnabled = false;
+	// flag for network status
+	boolean isNetworkEnabled = false;
+	// flag for Location status
+	boolean canGetLocation = false;
+	
 	private static final int TWO_MINUTES = 1000 * 60 * 2;
 	
 	public SensorGPS(LocationManager locationManager){

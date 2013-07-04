@@ -8,9 +8,13 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 //import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -97,7 +101,8 @@ public class MainActivity extends FragmentActivity {
     	handler_screen = new Handler();
     	handler_screen.postDelayed(screen_runnable, 100);
     	
-    	
+    	boolean flag = displayGpsStatus();
+    	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
     }
  
     //Acceleration --------------------------------------------
@@ -228,13 +233,11 @@ public class MainActivity extends FragmentActivity {
    	   @SuppressLint("SimpleDateFormat")
    	   @Override
    	   public void run() {
-   	      /* do what you need to do */
    	    	getGPSData();
    	    	tv_latitude.setText(str_latitude);
    	    	tv_longitude.setText(str_longitude);
    	    	
    	      /* and here comes the "trick" */    		
-
           handler_screen.postDelayed(this, SCREEN_TIME_DELAY);
        }
     };
@@ -250,4 +253,47 @@ public class MainActivity extends FragmentActivity {
            handler_connection.postDelayed(this, CONNECTION_TIME_DELAY);
         }
      };
+     
+     /*----------Method to create an AlertBox ------------- */
+ 	protected void alertbox(String title, String mymessage) {
+ 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+ 		builder.setMessage("Your Device's GPS is Disabled")
+ 				.setCancelable(false)
+ 				.setTitle("** Gps Status **")
+ 				.setPositiveButton("Gps On",
+ 						new DialogInterface.OnClickListener() {
+ 							public void onClick(DialogInterface dialog, int id) {
+ 								// finish the current activity
+ 								// AlertBoxAdvance.this.finish();
+ 								Intent myIntent = new Intent(
+ 										Settings.ACTION_SECURITY_SETTINGS);
+ 								startActivity(myIntent);
+ 								dialog.cancel();
+ 							}
+ 						})
+ 				.setNegativeButton("Cancel",
+ 						new DialogInterface.OnClickListener() {
+ 							public void onClick(DialogInterface dialog, int id) {
+ 								// cancel the dialog box
+ 								dialog.cancel();
+ 							}
+ 						});
+ 		AlertDialog alert = builder.create();
+ 		alert.show();
+ 	}
+ 	
+	/*----------Method to Check GPS is enable or disable ------------- */
+	private Boolean displayGpsStatus() {
+		ContentResolver contentResolver = getBaseContext().getContentResolver();
+		boolean gpsStatus = Settings.Secure.isLocationProviderEnabled(
+				contentResolver, LocationManager.GPS_PROVIDER) || Settings.Secure.isLocationProviderEnabled(
+						contentResolver, LocationManager.NETWORK_PROVIDER);
+		if (gpsStatus) {
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+
 }
