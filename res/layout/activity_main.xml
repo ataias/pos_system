@@ -108,19 +108,9 @@
         android:id="@+id/buttonSetHostPort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/settings"
-        android:layout_alignBottom="@+id/settings"
+        android:layout_alignBottom="@+id/imageView1"
         android:layout_toRightOf="@+id/txtLat"
         android:onClick="setHostPort"
         android:text="@string/start_server" />
-
-    <Button
-        android:id="@+id/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_alignLeft="@+id/txtLong"
-        android:onClick="setPreferences"
-        android:text="@string/settings" />
 
 </RelativeLayout>

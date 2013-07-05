@@ -130,21 +130,6 @@ public class MainActivity extends FragmentActivity {
     	automaticSender.cancel(true);
     	super.onDestroy();
 	}
-    /**
-     * Open Preferences Activity
-     * @param view
-     */
-    public void setPreferences(View view) {
-        Intent settingsActivity = new Intent(getBaseContext(),
-        		SettingsActivity.class);
-        startActivity(settingsActivity);
-    }
-    /*
-    public void setPreferences() {
-        Intent settingsActivity = new Intent(getBaseContext(),
-        		SettingsActivity.class);
-        startActivity(settingsActivity);
-    }*/
     
     /**
      * Open map with the location:
