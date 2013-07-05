@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -23,6 +24,7 @@ import android.content.pm.ResolveInfo;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +34,8 @@ import egl.positioningsystem.SocketTask;
 
 public class MainActivity extends FragmentActivity {
 	
+	//Settings
+	private static final int RESULT_SETTINGS = 1;
 	// Objects to deal with location ------------------
 	private TextView tv_latitude = null;
 	private TextView tv_longitude = null;
@@ -75,8 +79,6 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        
         //GPS --------------------------------------------------
         tv_latitude = (TextView) findViewById(R.id.latitude_value);
         tv_longitude = (TextView) findViewById(R.id.longitude_value);
@@ -105,7 +107,6 @@ public class MainActivity extends FragmentActivity {
     	
     }
  
-    //Acceleration --------------------------------------------
 	protected void onResume() {
     	super.onResume();
     	//mSensorManager.registerListener(myAccel, myAccel.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -129,12 +130,21 @@ public class MainActivity extends FragmentActivity {
     	automaticSender.cancel(true);
     	super.onDestroy();
 	}
-    
-    public void setPreferences() {
+    /**
+     * Open Preferences Activity
+     * @param view
+     */
+    public void setPreferences(View view) {
         Intent settingsActivity = new Intent(getBaseContext(),
         		SettingsActivity.class);
         startActivity(settingsActivity);
     }
+    /*
+    public void setPreferences() {
+        Intent settingsActivity = new Intent(getBaseContext(),
+        		SettingsActivity.class);
+        startActivity(settingsActivity);
+    }*/
     
     /**
      * Open map with the location:
@@ -260,7 +270,11 @@ public class MainActivity extends FragmentActivity {
         }
      };
      
-     /*----------Method to create an AlertBox ------------- */
+     /**
+      * Method to create an AlertBox 
+      * @param String title
+      * @param String mymessage
+      */
  	protected void alertbox(String title, String mymessage) {
  		AlertDialog.Builder builder = new AlertDialog.Builder(this);
  		builder.setMessage("Your Device's GPS is Disabled")
@@ -288,7 +302,10 @@ public class MainActivity extends FragmentActivity {
  		alert.show();
  	}
  	
-	/*----------Method to Check GPS is enable or disable ------------- */
+	/**
+	 * Method to Check GPS is enable or disable
+	 * @param null
+	 */
 	private Boolean displayGpsStatus() {
 		ContentResolver contentResolver = getBaseContext().getContentResolver();
 		boolean gpsStatus = Settings.Secure.isLocationProviderEnabled(
@@ -300,5 +317,55 @@ public class MainActivity extends FragmentActivity {
 			return false;
 		}
 	}
+	
+	/**
+	 * Menu events handler
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    	//To open a view when Settings menu button is pressed
+	        case R.id.action_settings:
+	        	Intent i = new Intent(this, SettingsActivity.class);
+	            startActivityForResult(i, RESULT_SETTINGS);
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+ 
+        switch (requestCode) {
+        case RESULT_SETTINGS:
+            showUserSettings();
+            break;
+ 
+        }
+ 
+    }
+	
+    private void showUserSettings() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+ 
+        StringBuilder builder = new StringBuilder();
+ 
+        builder.append("\n Username: "
+                + sharedPrefs.getString("prefUsername", "NULL"));
+ 
+        builder.append("\n Send report:"
+                + sharedPrefs.getBoolean("prefSendReport", false));
+ 
+        builder.append("\n Sync Frequency: "
+                + sharedPrefs.getString("prefSyncFrequency", "NULL"));
+/* 
+        TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
+ 
+        settingsTextView.setText(builder.toString());*/
+    }
 
 }
