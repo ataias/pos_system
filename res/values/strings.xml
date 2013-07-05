@@ -26,5 +26,7 @@
     <string name="host_port">Host:Porta</string>
     <string name="host_port_hint">186.193.7.38:5001</string>
     <string name="buttonMapsText">Mapa</string>
+    <string name="hostmessage">HostMessage</string>
+    <string name="settings">Settings</string>
 
 </resources>

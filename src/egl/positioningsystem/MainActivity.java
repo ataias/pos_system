@@ -54,16 +54,15 @@ public class MainActivity extends FragmentActivity {
 	private final int SCREEN_TIME_DELAY = 1000;//10s
 	
 	//Socket
-	private String host = "164.41.65.20";//"164.41.209.30";
-	private int port = 8090;
-	//private String host = "186.193.7.38";/*IP for tests*/
-	//private int port = 6001;
+	//private String host = "164.41.65.20";//"164.41.209.30";
+	//private int port = 8090;
+	private String host = "186.193.7.38";/*IP for tests*/
+	private int port = 6001;
 //	private Button btnSend;
     private TextView txtStatus;
     //private TextView txtValor;
     private TextView txtHostPort;
     private SocketTask automaticSender;
-    
     // Handle to SharedPreferences for this app
     SharedPreferences mPrefs; 
     String device_id;
@@ -75,6 +74,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {   	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         
         //GPS --------------------------------------------------
         tv_latitude = (TextView) findViewById(R.id.latitude_value);
@@ -85,7 +86,8 @@ public class MainActivity extends FragmentActivity {
         /*Acceleration -----------------------------------------
     	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
     	myAccel = new SensorAccel(mSensorManager);*/
-
+    	boolean flag = displayGpsStatus();
+    	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
     	//Socket
       //  btnSend = (Button) findViewById(R.id.buttonSetHostPort);
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
@@ -101,8 +103,6 @@ public class MainActivity extends FragmentActivity {
     	handler_screen = new Handler();
     	handler_screen.postDelayed(screen_runnable, 100);
     	
-    	boolean flag = displayGpsStatus();
-    	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
     }
  
     //Acceleration --------------------------------------------
@@ -129,6 +129,12 @@ public class MainActivity extends FragmentActivity {
     	automaticSender.cancel(true);
     	super.onDestroy();
 	}
+    
+    public void setPreferences() {
+        Intent settingsActivity = new Intent(getBaseContext(),
+        		SettingsActivity.class);
+        startActivity(settingsActivity);
+    }
     
     /**
      * Open map with the location:
@@ -286,8 +292,7 @@ public class MainActivity extends FragmentActivity {
 	private Boolean displayGpsStatus() {
 		ContentResolver contentResolver = getBaseContext().getContentResolver();
 		boolean gpsStatus = Settings.Secure.isLocationProviderEnabled(
-				contentResolver, LocationManager.GPS_PROVIDER) || Settings.Secure.isLocationProviderEnabled(
-						contentResolver, LocationManager.NETWORK_PROVIDER);
+				contentResolver, LocationManager.GPS_PROVIDER);
 		if (gpsStatus) {
 			return true;
 

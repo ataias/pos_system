@@ -9,7 +9,7 @@
         android:switchTextOff="Mostrar Endereço"
 		android:enabled="true"
 		android:switchTextOn="Mostrar Coordenadas"
-		android:summaryOn="showCoordenate"
+		android:summaryOn="showCoordinates"
 		android:summaryOff="showAddress"/>
     
 

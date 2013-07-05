@@ -86,15 +86,6 @@
         android:layout_marginTop="16dp"
         android:text="@string/host_port" />
 
-    <Button
-        android:id="@+id/buttonSetHostPort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textViewStatus"
-        android:layout_alignTop="@+id/imageView1"
-        android:onClick="setHostPort"
-        android:text="@string/start_server" />
-
     <TextView
         android:id="@+id/txtLong"
         android:layout_width="wrap_content"
@@ -110,7 +101,26 @@
         android:layout_alignLeft="@+id/textView7"
         android:layout_below="@+id/editHostPort"
         android:layout_marginTop="32dp"
-        android:text="HostMessage"
+        android:text="@string/hostmessage"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/buttonSetHostPort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/settings"
+        android:layout_alignBottom="@+id/settings"
+        android:layout_toRightOf="@+id/txtLat"
+        android:onClick="setHostPort"
+        android:text="@string/start_server" />
+
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView1"
+        android:layout_alignLeft="@+id/txtLong"
+        android:onClick="setPreferences"
+        android:text="@string/settings" />
 
 </RelativeLayout>
