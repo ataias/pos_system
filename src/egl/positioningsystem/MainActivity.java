@@ -33,7 +33,8 @@ import egl.positioningsystem.SensorGPS;
 import egl.positioningsystem.SocketTask;
 
 public class MainActivity extends FragmentActivity {
-	
+	public static final String KEY_PREF_HOST = "prefHost";
+	public static final String KEY_PREF_PORT = "prefPort";
 	//Settings
 	private static final int RESULT_SETTINGS = 1;
 	// Objects to deal with location ------------------
@@ -58,7 +59,7 @@ public class MainActivity extends FragmentActivity {
 	private final int SCREEN_TIME_DELAY = 1000;//10s
 	
 	//Socket
-	//IP for tests "164.41.65.20:8090";//"164.41.209.30:8090";
+	//IP for tests "164.41.65.20:8090";
 	private String host;
 	private int port;
     private TextView txtStatus;
@@ -98,18 +99,13 @@ public class MainActivity extends FragmentActivity {
     	
     	//Settings
     	mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	host = mPrefs.getString(SettingsActivity.KEY_PREF_HOST, "");
-    	port = (int) Integer.parseInt(mPrefs.getString(SettingsActivity.KEY_PREF_PORT, ""));
-    	
-    	mPrefs.registerOnSharedPreferenceChangeListener(prefListener);
-    	prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-  		  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-  			host = mPrefs.getString(SettingsActivity.KEY_PREF_HOST, "");
-  	    	port = (int) Integer.parseInt(mPrefs.getString(SettingsActivity.KEY_PREF_PORT, ""));
-  		  }
-  		};
+    	settingsListener();
     }
  
+    protected void settingsListener(){
+    	host = mPrefs.getString(SettingsActivity.KEY_PREF_HOST, "");
+    	port = (int) Integer.parseInt(mPrefs.getString(SettingsActivity.KEY_PREF_PORT, ""));
+    }
 	protected void onResume() {
     	super.onResume();
     	mPrefs.registerOnSharedPreferenceChangeListener(prefListener);
@@ -227,6 +223,7 @@ public class MainActivity extends FragmentActivity {
     	   @Override
     	   public void run() {
     	      /* do what you need to do */
+    		    settingsListener();
     	    	sendBySocket();    	    	
     	      /* and here comes the "trick" */    		
 
