@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
  
-    <PreferenceCategory android:title="@string/pref_user_profile" >
+    <PreferenceCategory android:title="@string/connection_settings" >
         <EditTextPreference
-                android:title="@string/pref_user_name"
-                android:summary="@string/pref_user_name_summary"
-                android:key="prefUsername"/>
+                android:title="@string/pref_host"
+                android:summary="@string/pref_set_host"
+                android:defaultValue="@string/pref_host_default"
+                android:key="prefHost"/>
+        <EditTextPreference
+                android:title="@string/pref_port"
+                android:summary="@string/pref_set_port"
+                android:defaultValue="@string/pref_port_default"
+                android:key="prefPort"/>
     </PreferenceCategory>
      
     <PreferenceCategory android:title="@string/pref_update_setting" >
@@ -18,6 +24,7 @@
  
         <ListPreference
             android:key="prefSyncFrequency"
+            android:defaultValue="5"
             android:entries="@array/syncFrequency"
             android:summary="@string/pref_sync_frequency_summary"
             android:entryValues="@array/syncFrequencyValues"

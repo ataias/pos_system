@@ -58,21 +58,17 @@ public class MainActivity extends FragmentActivity {
 	private final int SCREEN_TIME_DELAY = 1000;//10s
 	
 	//Socket
-	//private String host = "164.41.65.20";//"164.41.209.30";
-	//private int port = 8090;
-	private String host = "186.193.7.38";/*IP for tests*/
-	private int port = 6001;
-//	private Button btnSend;
+	//IP for tests "164.41.65.20:8090";//"164.41.209.30:8090";
+	private String host;
+	private int port;
     private TextView txtStatus;
-    //private TextView txtValor;
-    private TextView txtHostPort;
     private SocketTask automaticSender;
     // Handle to SharedPreferences for this app
-    SharedPreferences mPrefs; 
+    SharedPreferences mPrefs;
+    SharedPreferences.OnSharedPreferenceChangeListener  prefListener;
+    
     String device_id;
     TelephonyManager tm;
-    // Handle to a SharedPreferences editor
-    SharedPreferences.Editor mEditor;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {   	
@@ -85,16 +81,11 @@ public class MainActivity extends FragmentActivity {
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	myGPS = new SensorGPS(locationManager);
         
-        /*Acceleration -----------------------------------------
-    	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-    	myAccel = new SensorAccel(mSensorManager);*/
     	boolean flag = displayGpsStatus();
     	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
     	//Socket
-      //  btnSend = (Button) findViewById(R.id.buttonSetHostPort);
+
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
-        txtHostPort = (TextView) findViewById(R.id.editHostPort);
-        txtHostPort.setHint(host+":"+port);
     	
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         device_id = tm.getDeviceId();
@@ -105,18 +96,29 @@ public class MainActivity extends FragmentActivity {
     	handler_screen = new Handler();
     	handler_screen.postDelayed(screen_runnable, 100);
     	
+    	//Settings
+    	mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	host = mPrefs.getString(SettingsActivity.KEY_PREF_HOST, "");
+    	port = (int) Integer.parseInt(mPrefs.getString(SettingsActivity.KEY_PREF_PORT, ""));
+    	
+    	mPrefs.registerOnSharedPreferenceChangeListener(prefListener);
+    	prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+  		  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+  			host = mPrefs.getString(SettingsActivity.KEY_PREF_HOST, "");
+  	    	port = (int) Integer.parseInt(mPrefs.getString(SettingsActivity.KEY_PREF_PORT, ""));
+  		  }
+  		};
     }
  
 	protected void onResume() {
     	super.onResume();
-    	//mSensorManager.registerListener(myAccel, myAccel.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-	}
+    	mPrefs.registerOnSharedPreferenceChangeListener(prefListener);
+	}		
     	
 	protected void onPause() {
-		super.onPause();		
-		//mSensorManager.unregisterListener(myAccel);
+		super.onPause();
+		mPrefs.unregisterOnSharedPreferenceChangeListener(prefListener);
 	}
-
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -170,29 +172,6 @@ public class MainActivity extends FragmentActivity {
     	velocidade = (Double) myGPS.getVelocidade();
     	str_latitude = latitude.toString();
     	str_longitude =longitude.toString();
-    }
-    
-    /**
-     * Called when click in button buttonSetHostPort, get the host and port
-     * @param view
-     */
-    public void setHostPort(View view){
-    	// Recupera host e porta
-        String hostPort = txtHostPort.getText().toString();
-        
-        try{
-        	if(hostPort.length()>8){
-        		int idxHost = hostPort.indexOf(":");
-        		host = hostPort.substring(0, idxHost);
-        		port = Integer.parseInt(hostPort.substring(idxHost + 1));
-        	}
-        	txtHostPort.setHint(host+":"+port);
-            txtHostPort.clearComposingText();
-            Toast.makeText(MainActivity.this, "IP: "+host+":"+port, Toast.LENGTH_SHORT).show();
-        }catch(Exception e){
-        	Toast.makeText(MainActivity.this, "INPUT ERROR", Toast.LENGTH_SHORT).show();
-        }
-        
     }
     
     /**
@@ -334,19 +313,19 @@ public class MainActivity extends FragmentActivity {
     }
 	
     private void showUserSettings() {
-        SharedPreferences sharedPrefs = PreferenceManager
+        mPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
  
         StringBuilder builder = new StringBuilder();
  
         builder.append("\n Username: "
-                + sharedPrefs.getString("prefUsername", "NULL"));
+                + mPrefs.getString("prefUsername", "NULL"));
  
         builder.append("\n Send report:"
-                + sharedPrefs.getBoolean("prefSendReport", false));
+                + mPrefs.getBoolean("prefSendReport", false));
  
         builder.append("\n Sync Frequency: "
-                + sharedPrefs.getString("prefSyncFrequency", "NULL"));
+                + mPrefs.getString("prefSyncFrequency", "NULL"));
 /* 
         TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
  

@@ -64,28 +64,6 @@
         android:layout_toRightOf="@+id/txtLong"
         android:text="@string/latitude_value" />
 
-    <EditText
-        android:id="@+id/editHostPort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView7"
-        android:layout_alignBottom="@+id/textView7"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:hint="@string/host_port_hint" >
-
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtLat"
-        android:layout_below="@+id/txtLat"
-        android:layout_marginTop="16dp"
-        android:text="@string/host_port" />
-
     <TextView
         android:id="@+id/txtLong"
         android:layout_width="wrap_content"
@@ -98,19 +76,10 @@
         android:id="@+id/textViewStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView7"
-        android:layout_below="@+id/editHostPort"
-        android:layout_marginTop="32dp"
+        android:layout_alignLeft="@+id/txtLat"
+        android:layout_below="@+id/txtLat"
+        android:layout_marginTop="36dp"
         android:text="@string/hostmessage"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/buttonSetHostPort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_toRightOf="@+id/txtLat"
-        android:onClick="setHostPort"
-        android:text="@string/start_server" />
 
 </RelativeLayout>
