@@ -3,8 +3,9 @@ package egl.positioningsystem;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,14 +14,12 @@ import android.provider.Settings;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
-//import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-//import android.socket.SocketTask;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
@@ -45,8 +44,7 @@ public class MainActivity extends FragmentActivity {
 	private Double latitude;
 	private Double longitude;
 	private Double velocidade;
-	//private SensorManager mSensorManager;
-	private LocationManager locationManager = null;
+	private LocationManager lmGPS = null, lmNetwork = null;
 
 	// Objects to deal with acceleration ------------------
 	//private SensorAccel myAccel = null;
@@ -59,7 +57,7 @@ public class MainActivity extends FragmentActivity {
 	private final int SCREEN_TIME_DELAY = 1000;//10s
 	
 	//Socket
-	//IP for tests "164.41.65.20:8090";
+	//IP for tests "164.41.65.20:8090"; Rafael
 	private String host;
 	private int port;
     private TextView txtStatus;
@@ -79,8 +77,9 @@ public class MainActivity extends FragmentActivity {
         //GPS --------------------------------------------------
         tv_latitude = (TextView) findViewById(R.id.latitude_value);
         tv_longitude = (TextView) findViewById(R.id.longitude_value);
-    	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	myGPS = new SensorGPS(locationManager);
+    	lmNetwork = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	lmGPS = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	myGPS = new SensorGPS(lmNetwork, lmGPS);
         
     	boolean flag = displayGpsStatus();
     	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
@@ -165,7 +164,7 @@ public class MainActivity extends FragmentActivity {
     public void getGPSData(){
     	latitude = (Double) myGPS.getLatitude();
     	longitude = (Double) myGPS.getLongitude();
-    	velocidade = (Double) myGPS.getVelocidade();
+   // 	velocidade = (Double) myGPS.getVelocidade();
     	str_latitude = latitude.toString();
     	str_longitude =longitude.toString();
     }
@@ -223,6 +222,8 @@ public class MainActivity extends FragmentActivity {
     	   @Override
     	   public void run() {
     	      /* do what you need to do */
+    		    Boolean flag = haveInternet(getBaseContext());
+    		    if(!flag) alertboxNetwork();
     		    settingsListener();
     	    	sendBySocket();    	    	
     	      /* and here comes the "trick" */    		
@@ -231,6 +232,28 @@ public class MainActivity extends FragmentActivity {
         }
      };
      
+     /**
+      * Checks if we have a valid Internet Connection on the device.
+      * @param ctx
+      * @return True if device has internet
+      *
+      * Code from: http://www.androidsnippets.org/snippets/131/
+      */
+     public static boolean haveInternet(Context ctx) {
+
+         NetworkInfo info = (NetworkInfo) ((ConnectivityManager) ctx
+                 .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+         if (info == null || !info.isConnected()) {
+             return false;
+         }
+         if (info.isRoaming()) {
+             // here is the roaming option you can change it if you want to
+             // disable internet while roaming, just return false
+             return false;
+         }
+         return true;
+     }
      /**
       * Method to create an AlertBox 
       * @param String title
@@ -263,6 +286,37 @@ public class MainActivity extends FragmentActivity {
  		alert.show();
  	}
  	
+    /**
+     * Method to create an AlertBox for Internet
+     * @param String title
+     * @param String mymessage
+     */
+	protected void alertboxNetwork() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Your Device's internet is Disabled")
+				.setCancelable(false)
+				.setTitle("** Network Status **")
+				.setPositiveButton("Network On",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// finish the current activity
+								// AlertBoxAdvance.this.finish();
+								Intent myIntent = new Intent(
+										Settings.ACTION_SETTINGS);
+								startActivity(myIntent);
+								dialog.cancel();
+							}
+						})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// cancel the dialog box
+								dialog.cancel();
+							}
+						});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 	/**
 	 * Method to Check GPS is enable or disable
 	 * @param null
