@@ -25,13 +25,13 @@ public class SensorGPS implements SensorEventListener{
 	// flag for network status
 	boolean isNetworkEnabled = false;
 	// flag for Location status
-	boolean canGetLocation = false;
+	boolean canGetLocation = false; 
 	
-	public SensorGPS(LocationManager lmGPS, LocationManager lmNetwork){
+	public SensorGPS(LocationManager lm){
     	networkListener = new myLL_Network();
-    	lmNetwork.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, networkListener);
+    	lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, networkListener);
     	gpsListener = new myLL_GPS();
-    	lmGPS.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, gpsListener);
+    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, gpsListener);
 	}
 	
 	// TODO Criar um filtro para os dados
@@ -63,12 +63,12 @@ public class SensorGPS implements SensorEventListener{
     	
         @Override
         public void onProviderDisabled(String provider) {
-            // TODO Auto-generated method stub        	
+        	isGPSEnabled = false;       	
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            // TODO Auto-generated method stub        	
+        	isGPSEnabled = true;        	
         }
 
         @Override
@@ -86,7 +86,8 @@ public class SensorGPS implements SensorEventListener{
     	
         @Override
         public void onProviderDisabled(String provider) {
-            // TODO Auto-generated method stub        	
+            // TODO Auto-generated method stub  
+        	//SensorGPS.myLL_GPS.this
         }
 
         @Override

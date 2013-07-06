@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity {
 	private Double latitude;
 	private Double longitude;
 	private Double velocidade;
-	private LocationManager lmGPS = null, lmNetwork = null;
+	private LocationManager locManager = null;
 
 	// Objects to deal with acceleration ------------------
 	//private SensorAccel myAccel = null;
@@ -77,9 +77,8 @@ public class MainActivity extends FragmentActivity {
         //GPS --------------------------------------------------
         tv_latitude = (TextView) findViewById(R.id.latitude_value);
         tv_longitude = (TextView) findViewById(R.id.longitude_value);
-    	lmNetwork = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	lmGPS = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	myGPS = new SensorGPS(lmNetwork, lmGPS);
+    	locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	myGPS = new SensorGPS(locManager);
         
     	boolean flag = displayGpsStatus();
     	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
