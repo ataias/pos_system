@@ -22,7 +22,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v4.app.FragmentActivity;
-import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,8 +64,7 @@ public class MainActivity extends FragmentActivity {
     
     String device_id;
     TelephonyManager tm;
-    
-    SmsManager sms = null;
+
     SmsReceiver receiver=null;
 	IntentFilter filter=null;
     @Override
@@ -109,10 +107,6 @@ public class MainActivity extends FragmentActivity {
 	    filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         this.registerReceiver(receiver, filter);
-        
-    	sms = SmsManager.getDefault();
-	    sms.sendTextMessage("+556184828857", null, "Recebido! onCreate", null, null);
-    	
     }
  
     protected void settingsListener(){
