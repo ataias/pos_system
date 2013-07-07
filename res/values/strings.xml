@@ -35,11 +35,13 @@
     
     <string name="pref_send_report">Send crash reports</string>
     <string name="pref_send_report_summary">Helps to fix bugs</string>
-    <string name="pref_sync_frequency">Sync frequency</string>
-    <string name="pref_sync_frequency_summary">Set the sync frequency</string>
-    <string name="pref_host">Host and Port</string>
+    <string name="connection_pref_sync_frequency">Connection sync frequency</string>
+    <string name="screen_pref_sync_frequency">Screen sync frequency</string>
+    <string name="connection_pref_sync_frequency_summary">Set the connection sync frequency</string>
+    <string name="screen_pref_sync_frequency_summary">Set the screen sync frequency</string>
+    <string name="pref_host">Host IP</string>
     <string name="pref_set_host">Set your host ip</string>
-    <string name="pref_port">Set host port</string>
+    <string name="pref_port">Host port</string>
     <string name="pref_set_port">Set host port</string>
     <string name="pref_host_default">186.193.7.38</string>
     <string name="pref_port_default">6001</string>

@@ -23,12 +23,20 @@
         </CheckBoxPreference>
  
         <ListPreference
-            android:key="prefSyncFrequency"
-            android:defaultValue="5"
-            android:entries="@array/syncFrequency"
-            android:summary="@string/pref_sync_frequency_summary"
-            android:entryValues="@array/syncFrequencyValues"
-            android:title="@string/pref_sync_frequency" />
+            android:key="connectionPrefSyncFrequency"
+            android:defaultValue="5000"
+            android:entries="@array/connectionSyncFrequency"
+            android:summary="@string/connection_pref_sync_frequency_summary"
+            android:entryValues="@array/connectionSyncFrequencyValues"
+            android:title="@string/connection_pref_sync_frequency" />
+        
+        <ListPreference
+            android:key="screenPrefSyncFrequency"
+            android:defaultValue="5000"
+            android:entries="@array/screenSyncFrequency"
+            android:summary="@string/screen_pref_sync_frequency_summary"
+            android:entryValues="@array/screenSyncFrequencyValues"
+            android:title="@string/screen_pref_sync_frequency" />
     </PreferenceCategory>
  
 </PreferenceScreen>

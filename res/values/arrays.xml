@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="syncFrequency">
+    <string-array name="connectionSyncFrequency">
         <item name="2">2 seconds</item>
         <item name="5">5 seconds</item>
         <item name="10">10 seconds</item>
         <item name="20">20 seconds</item>
     </string-array>
-    <string-array name="syncFrequencyValues">
-        <item name="2">2</item>
-        <item name="5">5</item>
-        <item name="10">10</item>
-        <item name="20">20</item>
+    <string-array name="connectionSyncFrequencyValues">
+        <item name="2">2000</item>
+        <item name="5">5000</item>
+        <item name="10">10000</item>
+        <item name="20">20000</item>
     </string-array>
-     
+
+    <string-array name="screenSyncFrequency">
+        <item name="0">0.2 seconds</item>
+        <item name="1">1 seconds</item>
+        <item name="2">2 seconds</item>
+        <item name="5">5 seconds</item>
+        <item name="10">10 seconds</item>
+        <item name="20">20 seconds</item>
+    </string-array>
+    <string-array name="screenSyncFrequencyValues">
+        <item name="0">200</item>
+        <item name="1">1000</item>
+        <item name="2">2000</item>
+        <item name="5">5000</item>
+        <item name="10">10000</item>
+        <item name="20">20000</item>
+    </string-array>
 </resources>

@@ -17,10 +17,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,8 +34,6 @@ import egl.positioningsystem.SensorGPS;
 import egl.positioningsystem.SocketTask;
 
 public class MainActivity extends FragmentActivity {
-	public static final String KEY_PREF_HOST = "prefHost";
-	public static final String KEY_PREF_PORT = "prefPort";
 	//Settings
 	private static final int RESULT_SETTINGS = 1;
 	// Objects to deal with location ------------------
@@ -53,9 +53,6 @@ public class MainActivity extends FragmentActivity {
 	//To create infinite loop
 	private Handler handler_connection = null;
 	private Handler handler_screen = null;
-	private final int CONNECTION_TIME_DELAY = 10000;//10s
-	private final int SCREEN_TIME_DELAY = 1000;//10s
-	
 	//Socket
 	//IP for tests "164.41.65.20:8090"; Rafael
 	private String host;
@@ -68,7 +65,10 @@ public class MainActivity extends FragmentActivity {
     
     String device_id;
     TelephonyManager tm;
-
+    
+    SmsManager sms = null;
+    SmsReceiver receiver=null;
+	IntentFilter filter=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {   	
         super.onCreate(savedInstanceState);
@@ -104,6 +104,14 @@ public class MainActivity extends FragmentActivity {
     	PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     	mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     	settingsListener();
+    	
+    	receiver=new SmsReceiver();
+	    filter = new IntentFilter();
+        filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        this.registerReceiver(receiver, filter);
+        
+    	sms = SmsManager.getDefault();
+	    sms.sendTextMessage("+556184828857", null, "Recebido! onCreate", null, null);
     	
     }
  
@@ -212,28 +220,31 @@ public class MainActivity extends FragmentActivity {
    	   @SuppressLint("SimpleDateFormat")
    	   @Override
    	   public void run() {
-   	    	getGPSData();
-   	    	tv_latitude.setText(str_latitude);
-   	    	tv_longitude.setText(str_longitude);
+   		   getGPSData();
+   	       tv_latitude.setText(str_latitude);
+   	       tv_longitude.setText(str_longitude);
    	    	
-   	      /* and here comes the "trick" */    		
-          handler_screen.postDelayed(this, SCREEN_TIME_DELAY);
+   	       /* and here comes the "trick" */
+   	       String screen_delay = mPrefs.getString(SettingsActivity.KEY_PREF_SCREEN_SYNC_FREQUENCY, "");
+   	       long screen_time_delay = (long) Integer.parseInt(screen_delay);
+           handler_screen.postDelayed(this, screen_time_delay);
        }
     };
     
     private Runnable connection_runnable = new Runnable() {
-    	   @SuppressLint("SimpleDateFormat")
-    	   @Override
-    	   public void run() {
-    	      /* do what you need to do */
-    		    Boolean hasInternet = haveInternet(getBaseContext());
-    		    if(hasInternet){
-    		    settingsListener();
-    	    	sendBySocket();    	 
-    		    }
-    	      /* and here comes the "trick" */    		
-
-           handler_connection.postDelayed(this, CONNECTION_TIME_DELAY);
+    	@SuppressLint("SimpleDateFormat")
+    	@Override
+    		public void run() {
+        	/* do what you need to do */
+    	    Boolean hasInternet = haveInternet(getBaseContext());
+    	    if(hasInternet){
+    	    settingsListener();
+    	    sendBySocket();    	 
+    	    }
+    	    /* and here comes the "trick" */    		
+    	    String connection_delay = mPrefs.getString(SettingsActivity.KEY_PREF_CONNECTION_SYNC_FREQUENCY, "");
+    	    long connection_time_delay = (long) Integer.parseInt(connection_delay);
+            handler_connection.postDelayed(this, connection_time_delay);
         }
      };
      
