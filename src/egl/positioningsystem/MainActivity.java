@@ -68,7 +68,7 @@ public class MainActivity extends FragmentActivity {
     
     String device_id;
     TelephonyManager tm;
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {   	
         super.onCreate(savedInstanceState);
@@ -82,6 +82,8 @@ public class MainActivity extends FragmentActivity {
         
     	boolean flag = displayGpsStatus();
     	if(!flag) alertbox("Gps Status!!", "Your GPS is: OFF");
+    	boolean hasInternet = haveInternet(getBaseContext());
+    	if(!hasInternet) alertboxNetwork();
     	//Socket
 
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
@@ -96,8 +98,13 @@ public class MainActivity extends FragmentActivity {
     	handler_screen.postDelayed(screen_runnable, 100);
     	
     	//Settings
+    	//When the program is installed for the first time, it does not have defaultSharePreferences
+    	//So the setDefaultValues is used in this case
+    	//It is only called when it was never before
+    	PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     	mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     	settingsListener();
+    	
     }
  
     protected void settingsListener(){
@@ -106,12 +113,10 @@ public class MainActivity extends FragmentActivity {
     }
 	protected void onResume() {
     	super.onResume();
-    	mPrefs.registerOnSharedPreferenceChangeListener(prefListener);
 	}		
     	
 	protected void onPause() {
 		super.onPause();
-		mPrefs.unregisterOnSharedPreferenceChangeListener(prefListener);
 	}
 	
     @Override
@@ -221,10 +226,11 @@ public class MainActivity extends FragmentActivity {
     	   @Override
     	   public void run() {
     	      /* do what you need to do */
-    		    Boolean flag = haveInternet(getBaseContext());
-    		    if(!flag) alertboxNetwork();
+    		    Boolean hasInternet = haveInternet(getBaseContext());
+    		    if(hasInternet){
     		    settingsListener();
-    	    	sendBySocket();    	    	
+    	    	sendBySocket();    	 
+    		    }
     	      /* and here comes the "trick" */    		
 
            handler_connection.postDelayed(this, CONNECTION_TIME_DELAY);
@@ -287,8 +293,6 @@ public class MainActivity extends FragmentActivity {
  	
     /**
      * Method to create an AlertBox for Internet
-     * @param String title
-     * @param String mymessage
      */
 	protected void alertboxNetwork() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -348,38 +352,4 @@ public class MainActivity extends FragmentActivity {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
- 
-        switch (requestCode) {
-        case RESULT_SETTINGS:
-            showUserSettings();
-            break;
- 
-        }
- 
-    }
-	
-    private void showUserSettings() {
-        mPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
- 
-        StringBuilder builder = new StringBuilder();
- 
-        builder.append("\n Username: "
-                + mPrefs.getString("prefUsername", "NULL"));
- 
-        builder.append("\n Send report:"
-                + mPrefs.getBoolean("prefSendReport", false));
- 
-        builder.append("\n Sync Frequency: "
-                + mPrefs.getString("prefSyncFrequency", "NULL"));
-/* 
-        TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
- 
-        settingsTextView.setText(builder.toString());*/
-    }
-
 }
