@@ -107,6 +107,7 @@ public class MainActivity extends FragmentActivity {
 	    filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         this.registerReceiver(receiver, filter);
+        receiver.externalData(myGPS, mPrefs, device_id);
     }
  
     protected void settingsListener(){
