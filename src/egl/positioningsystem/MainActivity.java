@@ -248,7 +248,6 @@ public class MainActivity extends FragmentActivity {
       * @param ctx
       * @return True if device has internet
       *
-      * Code from: http://www.androidsnippets.org/snippets/131/
       */
      public static boolean haveInternet(Context ctx) {
 
@@ -281,7 +280,7 @@ public class MainActivity extends FragmentActivity {
  								// finish the current activity
  								// AlertBoxAdvance.this.finish();
  								Intent myIntent = new Intent(
- 										Settings.ACTION_SECURITY_SETTINGS);
+ 										Settings.ACTION_LOCATION_SOURCE_SETTINGS);
  								startActivity(myIntent);
  								dialog.cancel();
  							}
@@ -357,5 +356,27 @@ public class MainActivity extends FragmentActivity {
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	
+	/**
+	 * Back button events handler
+	 */
+	@Override
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle("Closing Activity")
+	        .setMessage("Are you sure you want to close this activity?")
+	        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+	    {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	            finish();    
+	        }
+
+	    })
+	    .setNegativeButton("No", null)
+	    .show();
 	}
 }
